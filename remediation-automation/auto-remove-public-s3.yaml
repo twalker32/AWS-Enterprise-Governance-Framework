@@ -1,0 +1,26 @@
+
+Resources:
+  AutoRemediatePublicS3:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-read-prohibited
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+      InputParameters: {}
+      MaximumExecutionFrequency: Six_Hours
+      ConfigRuleState: ACTIVE
+      SourceDetails:
+        - EventSource: aws.config
+          MessageType: ConfigurationItemChangeNotification
+    Metadata:
+      Remediation:
+        Automatic: true
+        RemediationAction:
+          AutomationAssumeRole: arn:aws:iam::*:role/RemediationRole
+          DocumentName: AWSConfigRemediation-RemovePublicAccess
+          Parameters:
+            BucketName: "${AWS::Config::ResourceId}"

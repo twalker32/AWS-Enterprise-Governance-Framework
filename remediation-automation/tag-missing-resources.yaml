@@ -1,0 +1,25 @@
+
+Resources:
+  TagMissingResources:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: required-tags
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+      InputParameters:
+        tag1Key: "Owner"
+        tag2Key: "Environment"
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+          - AWS::EC2::Volume
+      ConfigRuleState: ACTIVE
+    Metadata:
+      Remediation:
+        Automatic: true
+        RemediationAction:
+          AutomationAssumeRole: arn:aws:iam::*:role/TaggingRemediationRole
+          DocumentName: AWSConfigRemediation-TagMissingResources
+          Parameters:
+            ResourceId: "${AWS::Config::ResourceId}"
